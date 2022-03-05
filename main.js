@@ -3,9 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const Contacto = require('./Modelos/Contacto');
 const app = express();
+require('dotenv/config');
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://Iregui:Iregui123@cluster0.tp28y.mongodb.net/Contactos?retryWrites=true&w=majority', ()=>console.log('conectado a bd'));
+mongoose.connect(process.env.DB_CONNECTION, ()=>console.log('conectado a bd'));
 
 app.get('/', (request, respond) => {
     respond.send("Entro!");
