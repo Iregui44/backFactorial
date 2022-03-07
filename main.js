@@ -5,6 +5,7 @@ const Contacto = require('./Modelos/Contacto');
 const app = express();
 require('dotenv/config');
 app.use(express.json());
+app.use(cors());
 
 mongoose.connect(process.env.DB_CONNECTION, ()=>console.log('conectado a bd'));
 
@@ -45,7 +46,7 @@ app.get('/contactos/:email', cors(), (request, respond) => {
     })
 });
 
-app.post('/contactos', (request, respond) => {
+app.post('/contactos', cors(), (request, respond) => {
     if(!validate(request.body.nombre,request.body.apellido,request.body.email,request.body.celular)) {
         respond.status(400).send("Todos los campos son necesarios")
     }
@@ -83,14 +84,14 @@ app.put('/contactos/:email', (request, respond) => {
     }
     else {
         Contacto.findOneAndUpdate({email:request.params.email},
-            {nombre:request.body.nombre, apellido: request.body.apellido, celular:request.body.celular}, 
+            {nombre:request.body.nombre, apellido: request.body.apellido, celular:request.body.celular, $push: { cambios: {cambio: "Modificado PUT", fecha: Date.now()}}}, 
+            {new: true},
             (error, result) => {
                 if(error) {
                     respond.send(error);
                 }
                 else {
-                    if(result != null) {
-                        result.cambios.push({cambio: "Modificado POST", fecha: Date.now()});
+                    if(result != null) {4
                         respond.send(result);
                     }
                     else {
